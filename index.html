@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>天下无密 - 安全密码管理器</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --color-bg: #f8fafc;
+      --color-surface: #ffffff;
+      --color-surface-elevated: #ffffff;
+      --color-border: #e2e8f0;
+      --color-text: #1e293b;
+      --color-text-muted: #64748b;
+      --color-accent: #3b82f6;
+      --color-accent-glow: rgba(59, 130, 246, 0.15);
+      --color-success: #2dd4bf;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Noto Sans SC', -apple-system, sans-serif;
+      background-color: var(--color-bg);
+      color: var(--color-text);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* Background Pattern */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image:
+        radial-gradient(circle at 20% 50%, var(--color-accent-glow) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(59, 130, 246, 0.1) 0%, transparent 40%),
+        url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0L30 60M0 30L60 30' stroke='%23e5e7eb' stroke-width='0.5' fill='none'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* Header */
+    header {
+      padding: 24px 0;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(20px);
+      z-index: 100;
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    .header-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+    }
+
+    .logo-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      object-fit: contain;
+    }
+
+    .logo-text {
+      font-family: 'Noto Serif SC', serif;
+      font-size: 24px;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--color-accent), #60a5fa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    nav {
+      display: flex;
+      gap: 32px;
+    }
+
+    nav a {
+      color: var(--color-text-muted);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      transition: color 0.3s;
+    }
+
+    nav a:hover {
+      color: var(--color-accent);
+    }
+
+    /* Hero */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding-top: 120px;
+      padding-bottom: 60px;
+      position: relative;
+    }
+
+    .hero-header {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+
+    .hero-header h1 {
+      font-family: 'Noto Serif SC', serif;
+      font-size: 64px;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+
+    .hero-subtitle {
+      font-size: 20px;
+      color: var(--color-text-muted);
+    }
+
+    .hero-downloads {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .hero-text p {
+      font-size: 18px;
+      color: var(--color-text-muted);
+      margin-bottom: 40px;
+      max-width: 480px;
+    }
+
+    .hero-downloads {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+    }
+
+    .hero-downloads .download-card {
+      padding: 24px 16px;
+    }
+
+    .hero-downloads .download-icon {
+      width: 48px;
+      height: 48px;
+      font-size: 24px;
+    }
+
+    .hero-downloads h3 {
+      font-size: 16px;
+    }
+
+    .hero-downloads .subtitle {
+      font-size: 12px;
+      margin-bottom: 16px;
+    }
+
+    /* Download Section */
+    .download-section {
+      padding: 100px 0;
+      background: var(--color-surface);
+      border-top: 1px solid var(--color-border);
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    .section-title {
+      text-align: center;
+      margin-bottom: 60px;
+    }
+
+    .section-title h2 {
+      font-family: 'Noto Serif SC', serif;
+      font-size: 40px;
+      font-weight: 600;
+      margin-bottom: 16px;
+    }
+
+    .section-title p {
+      color: var(--color-text-muted);
+      font-size: 16px;
+    }
+
+    .download-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+
+    .download-card {
+      background: var(--color-surface-elevated);
+      border: 1px solid var(--color-border);
+      border-radius: 20px;
+      padding: 40px 32px;
+      text-align: center;
+      transition: all 0.4s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .download-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, var(--color-accent), transparent);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .download-card:hover {
+      transform: translateY(-8px);
+      border-color: var(--color-accent);
+      box-shadow: 0 20px 60px rgba(59, 130, 246, 0.15);
+    }
+
+    .download-card:hover::before {
+      opacity: 1;
+    }
+
+    .download-icon {
+      width: 64px;
+      height: 64px;
+      margin: 0 auto 24px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+    }
+
+    .download-card.mac .download-icon {
+      background: linear-gradient(135deg, #1a1a1a, #2a2a2a);
+    }
+
+    .download-card.windows .download-icon {
+      background: linear-gradient(135deg, #0078d4, #005a9e);
+    }
+
+    .download-card.extension .download-icon {
+      background: linear-gradient(135deg, #4285f4, #3367d6);
+    }
+
+    .download-card h3 {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .download-card .subtitle {
+      color: var(--color-text-muted);
+      font-size: 14px;
+      margin-bottom: 24px;
+    }
+
+    .download-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 28px;
+      background: var(--color-accent);
+      color: #fff;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 14px;
+      border-radius: 12px;
+      transition: all 0.3s;
+    }
+
+    .download-btn:hover {
+      background: #2563eb;
+      transform: scale(1.05);
+    }
+
+    .download-btn svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    /* Features */
+    .features {
+      padding: 100px 0;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 32px;
+    }
+
+    .feature-card {
+      padding: 32px;
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: 20px;
+      transition: all 0.3s;
+    }
+
+    .feature-card:hover {
+      border-color: var(--color-accent);
+    }
+
+    .feature-icon {
+      width: 48px;
+      height: 48px;
+      background: linear-gradient(135deg, var(--color-accent-glow), transparent);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      margin-bottom: 20px;
+    }
+
+    .feature-card h3 {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+
+    .feature-card p {
+      color: var(--color-text-muted);
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    /* Footer */
+    footer {
+      padding: 40px 0;
+      border-top: 1px solid var(--color-border);
+      text-align: center;
+    }
+
+    footer p {
+      color: var(--color-text-muted);
+      font-size: 14px;
+    }
+
+    footer a {
+      color: var(--color-accent);
+      text-decoration: none;
+    }
+
+    /* Responsive */
+    @media (max-width: 968px) {
+      .hero-header h1 {
+        font-size: 40px;
+      }
+
+      .hero-downloads {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .download-grid, .features-grid {
+        grid-template-columns: 1fr;
+        max-width: 400px;
+        margin: 0 auto;
+      }
+
+      .hero-text h1 {
+        font-size: 40px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container header-inner">
+      <a href="#" class="logo">
+        <img src="./build/icon.png" alt="天下无密" class="logo-icon">
+        <span class="logo-text">天下无密</span>
+      </a>
+      <nav>
+        <a href="#features">功能</a>
+        <a href="#features">功能</a>
+        <a href="https://github.com/hlf2002/wumi" target="_blank">GitHub</a>
+      </nav>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="container">
+      <div class="hero-header">
+        <h1>天下无密</h1>
+        <p class="hero-subtitle">安全、简洁的密码管理器</p>
+      </div>
+      <div class="download-grid hero-downloads">
+        <div class="download-card mac">
+          <div class="download-icon">🍎</div>
+          <h3>macOS (Intel)</h3>
+          <p class="subtitle">适用于 Intel 芯片 Mac</p>
+          <a href="./release/天下无密-1.0.0.dmg" class="download-btn" download>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/>
+            </svg>
+            下载
+          </a>
+        </div>
+        <div class="download-card mac">
+          <div class="download-icon">🍎</div>
+          <h3>macOS (Apple Silicon)</h3>
+          <p class="subtitle">适用于 M1/M2/M3 芯片 Mac</p>
+          <a href="./release/天下无密-1.0.0-arm64.dmg" class="download-btn" download>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/>
+            </svg>
+            下载
+          </a>
+        </div>
+        <div class="download-card windows">
+          <div class="download-icon">🪟</div>
+          <h3>Windows</h3>
+          <p class="subtitle">64 位 Windows 10/11</p>
+          <a href="./release/天下无密%20Setup%201.0.0.exe" class="download-btn" download>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/>
+            </svg>
+            下载
+          </a>
+        </div>
+        <div class="download-card extension">
+          <div class="download-icon">🦁</div>
+          <h3>浏览器扩展</h3>
+          <p class="subtitle">支持 Chrome、Edge、Firefox</p>
+          <a href="./extension.zip" class="download-btn" download>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/>
+            </svg>
+            下载
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="features" id="features">
+    <div class="container">
+      <div class="section-title">
+        <h2>核心功能</h2>
+        <p>企业级安全标准，简单易用</p>
+      </div>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">🔐</div>
+          <h3>AES-256-GCM 加密</h3>
+          <p>采用业界领先的 AES-256-GCM 加密算法，配合 PBKDF2 密钥派生，确保您的数据安全无虞。</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🌐</div>
+          <h3>浏览器自动填充</h3>
+          <p>安装浏览器插件后，自动检测登录表单，一键填充用户名和密码，享受无缝的上网体验。</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">⚡</div>
+          <h3>强密码生成</h3>
+          <p>内置强大的密码生成器，可自定义长度和字符类型，快速生成高强度密码。</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📱</div>
+          <h3>跨平台支持</h3>
+          <p>支持 macOS (Intel & Apple Silicon) 和 Windows，一次购买，随时随地使用。</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🔒</div>
+          <h3>本地加密存储</h3>
+          <p>所有数据仅存储在本地设备，隐私数据不经过任何第三方服务器，安全可控。</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">✨</div>
+          <h3>简洁中文界面</h3>
+          <p>全中文界面设计，符合国内用户习惯，操作简单直观，上手即用。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container">
+      <p>© 2024 天下无密. 基于 Electron + React 构建.</p>
+    </div>
+  </footer>
+
+  <script>
+    // Smooth scroll
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth' });
+        }
+      });
+    });
+
+    // Header scroll effect
+    let lastScroll = 0;
+    window.addEventListener('scroll', () => {
+      const header = document.querySelector('header');
+      const currentScroll = window.pageYOffset;
+
+      if (currentScroll > 100) {
+        header.style.background = 'rgba(255, 255, 255, 0.95)';
+      } else {
+        header.style.background = 'rgba(255, 255, 255, 0.8)';
+      }
+      lastScroll = currentScroll;
+    });
+  </script>
+</body>
+</html>
